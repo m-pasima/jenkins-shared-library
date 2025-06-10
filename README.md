@@ -73,7 +73,7 @@ In your Jenkinsfile, load and call functions from the shared library:
 ```groovy
 @Library('devops-lib') _
 
-mavenPipeline(repo: 'https://github.com/m-pasima/maven-web-app-demo.git')
+mavenAppPipeline(repo: 'https://github.com/m-pasima/maven-web-app-demo.git')
 ```
 
 > ⚠️ **Note:** Replace `'devops-lib'` with the name you configured in Jenkins.
