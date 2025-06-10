@@ -18,7 +18,9 @@ This directory provides a Jenkins Shared Library refactored from the original `J
 ```
 jenkins-shared-library/
   vars/
-    mavenPipeline.groovy
+   mavenAppPipeline.groovy
+
+
 ```
 
 ---
