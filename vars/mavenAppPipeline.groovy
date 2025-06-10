@@ -1,38 +1,58 @@
 def call(Map config = [:]) {
     pipeline {
         agent any
-        tools { maven 'maven3.9.9' }
+        tools {
+            maven 'maven3.9.9'
+        }
         stages {
-            stage('Clone code') {
+            stage('Clone Code') {
                 steps {
-                    git branch: env.BRANCH_NAME, url: config.repo
+                    git branch: "${env.BRANCH_NAME}", url: config.get('repo', 'https://github.com/m-pasima/maven-web-app-demo.git')
                 }
             }
-            stage('Build') {
-                steps { sh 'mvn clean package' }
+            stage('Maven Build') {
+                steps {
+                    sh 'mvn clean package'
+                }
             }
-            stage('scan with sonarqube') {
-                steps { sh 'mvn verify sonar:sonar' }
+            stage('Sonar Scan') {
+                steps {
+                    sh 'mvn verify sonar:sonar'
+                }
             }
             stage('Upload Build Artifacts') {
-                steps { sh 'mvn deploy' }
+                steps {
+                    sh 'mvn deploy'
+                }
             }
-            stage('Deploy to tomcat') {
+            stage('Deploy to Dev') {
+                when {
+                    branch 'dev'
+                }
+                steps {
+                    echo 'Deploying to Dev...'
+                }
+            }
+            stage('Deploy to Stage') {
+                when {
+                    branch 'stage'
+                }
+                steps {
+                    echo 'Deploying to Stage...'
+                }
+            }
+            stage('Manual Approval & Deploy to Prod') {
+                when {
+                    branch 'main'
+                }
                 steps {
                     script {
-                        if (env.BRANCH_NAME in ['main', 'staging']) {
-                            deploy adapters: [
-                                tomcat9(
-                                    credentialsId: 'tomcat-creds',
-                                    url: 'http://18.134.158.50:8080'
-                                )
-                            ], contextPath: 'tesco', war: '**/*.war'
-                        } else {
-                            echo 'Skipping deployment for dev branch'
-                        }
+                        input message: 'Approve or Deny deployment to Production'
                     }
+                    deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat-creds', path: '', url: 'http://35.179.144.183:8080/')], contextPath: 'tesco', war: '**/*.war'
                 }
             }
         }
     }
 }
+ 
