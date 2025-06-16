@@ -4,6 +4,9 @@ def call(Map config = [:]) {
         tools {
             maven 'maven3.9.9'
         }
+        environment {
+            // Add any environment variables here if needed
+        }
         stages {
             stage('Clone Code') {
                 steps {
@@ -47,18 +50,38 @@ def call(Map config = [:]) {
                 }
                 steps {
                     script {
+                        // Send a Slack message before manual input
+                        slackSend (
+                            color: '#FFA500',
+                            channel: '#jenkins-test-demo',
+                            message: "🚦 *Manual approval required!* \nPlease approve or deny deployment for job '${env.JOB_NAME}' #${env.BUILD_NUMBER}: <${env.BUILD_URL}|Open Build>"
+                        )
+                        // Pause for manual approval
                         input message: 'Approve or Deny deployment to Production'
                     }
-                    deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat-creds', path: '', url: 'http://18.171.167.209:8080/')], contextPath: 'tesco', war: '**/*.war'
+                    deploy adapters: [tomcat9(
+                        alternativeDeploymentContext: '',
+                        credentialsId: 'tomcat-creds',
+                        path: '',
+                        url: 'http://18.171.167.209:8080/')
+                    ], contextPath: 'tesco', war: '**/*.war'
                 }
             }
         }
-
-        post { 
-        always { 
-            slackSend color: COLOR_MAP[currentBuild.currentResult], channel: '#jenkins-test-demo', message: "Build done by Pasima JOB started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)" 
+        post {
+            always {
+                def COLOR_MAP = [
+                    'SUCCESS': 'good',
+                    'FAILURE': 'danger',
+                    'UNSTABLE': 'warning',
+                    'ABORTED': '#cccccc'
+                ]
+                slackSend(
+                    color: COLOR_MAP[currentBuild.currentResult] ?: '#cccccc',
+                    channel: '#jenkins-test-demo',
+                    message: "Build by Pasima - Result: *${currentBuild.currentResult}* for `${env.JOB_NAME}` #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+                )
+            }
         }
     }
-    }
 }
- 
