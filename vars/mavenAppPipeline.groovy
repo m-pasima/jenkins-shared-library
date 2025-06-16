@@ -49,7 +49,7 @@ def call(Map config = [:]) {
                     script {
                         input message: 'Approve or Deny deployment to Production'
                     }
-                    deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat-creds', path: '', url: 'http://35.179.144.183:8080/')], contextPath: 'tesco', war: '**/*.war'
+                    deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat-creds', path: '', url: 'http://18.171.167.209:8080/')], contextPath: 'tesco', war: '**/*.war'
                 }
             }
         }
