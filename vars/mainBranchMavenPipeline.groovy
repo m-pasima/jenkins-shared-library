@@ -3,7 +3,7 @@
  * Shared Library: mainBranchMavenPipeline
  * Description: Jenkins pipeline for building/deploying main branch of a Maven app.
  * Parameters:
- *   - repo (optional): Git URL to clone. Defaults to Pasima demo app.
+ *   - repo (optional): Git URL to clone. Defaults to mavenwebapp-demo-app.
  */
 def call(Map config = [:]) {
     pipeline {
