@@ -53,6 +53,12 @@ def call(Map config = [:]) {
                 }
             }
         }
+
+        post { 
+        always { 
+            slackSend color: COLOR_MAP[currentBuild.currentResult], channel: '#jenkins-test-demo', message: "Build done by Pasima JOB started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)" 
+        }
+    }
     }
 }
  
