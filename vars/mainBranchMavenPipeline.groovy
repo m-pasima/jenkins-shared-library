@@ -29,7 +29,7 @@ def call(Map config = [:]) {
             }
             stage('Upload Build Artifacts') {
                 steps {
-                    configFileProvider([configFile(fileId: '5ad5d097-b297-4a37-aebf-e9afdab737c8', variable: 'MAVEN_SETTINGS')]) {
+                    configFileProvider([configFile(fileId: '6f1e7ff0-b3ac-4879-9134-020fc8c49934', variable: 'MAVEN_SETTINGS')]) {
                         sh 'mvn deploy --settings $MAVEN_SETTINGS'
                     }
                 }
@@ -41,7 +41,7 @@ def call(Map config = [:]) {
                             alternativeDeploymentContext: '', 
                             credentialsId: 'tomcat-creds', 
                             path: '', 
-                            url: 'http://18.171.167.209:8080'
+                            url: 'http://18.130.11.10:8080/'
                         )
                     ], contextPath: 'tesco', war: '**/*.war'
                 }
@@ -58,7 +58,7 @@ def call(Map config = [:]) {
                     ]
                     slackSend(
                         color: COLOR_MAP[currentBuild.currentResult] ?: 'danger',
-                        channel: '#jenkins-test-demo',
+                        channel: '##all-devops-academy',
                         message: "Build done by Pasima. JOB: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
                     )
                 }
